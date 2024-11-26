@@ -1,0 +1,17 @@
+name: Instabuild
+version: '1.0'
+main: me.lukiiy.instabuild.Instabuild
+author: Lukiiy
+description: A creative mode, but for b1.7.3
+commands:
+  instabuild:
+    permission: instabuild.use
+    usage: "/instabuild"
+    aliases: [ "ib" ]
+  pickblock:
+    permission: instabuild.use
+    usage: "/pickblock"
+  instabuildgive:
+    permission: instabuild.use
+    usage: "/ibgive <id:data>"
+    aliases: [ "igive", "ibgive", "ibg" ]
