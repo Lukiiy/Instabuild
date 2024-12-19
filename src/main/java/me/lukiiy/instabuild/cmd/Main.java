@@ -41,7 +41,7 @@ public class Main implements CommandExecutor {
                 return true;
             }
             case "listids": {
-                commandSender.sendMessage("§aItem & IDs:");
+                commandSender.sendMessage("§aAvailable Item & IDs:");
                 Arrays.stream(Material.values()).forEach(m -> {
                     commandSender.sendMessage(m.name() + " (" + m.getId() + ")");
                 });

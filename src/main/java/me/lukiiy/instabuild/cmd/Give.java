@@ -46,6 +46,7 @@ public class Give implements CommandExecutor {
 
         ItemStack item = new ItemStack(Material.getMaterial(id), amount, (short) 0, data);
         p.getInventory().addItem(item);
+        p.updateInventory();
         p.sendMessage("§eGot §f" + Utils.formattedCoolID(item.getType(), item.getData().getData(), item.getAmount()));
         return true;
     }

@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+@SuppressWarnings("deprecation")
 public class PlayerEcho extends PlayerListener {
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
@@ -29,32 +30,39 @@ public class PlayerEcho extends PlayerListener {
                 ItemStack hand = e.getItem();
                 hand.setDurability((short) 0);
 
-                if (hand.getType() == Material.BOW) {
-                    e.setUseItemInHand(Event.Result.DENY);
-                    e.setCancelled(true);
-                    p.shootArrow();
-                    return;
+                switch (hand.getType()) {
+                    case BOW:
+                        e.setUseItemInHand(Event.Result.DENY);
+                        e.setCancelled(true);
+                        p.shootArrow();
+                        break;
+                    case COMPASS:
+                        e.setUseItemInHand(Event.Result.DENY);
+                        e.setCancelled(true);
+
+                        Block main = p.getTargetBlock(Utils.ignoreAirAndLiquids(), 32);
+                        if (main.isEmpty()) return;
+
+                        Block above = main.getRelative(BlockFace.UP);
+                        Location loc = above.getLocation().add(.5, 0, .5);
+                        loc.setPitch(p.getLocation().getPitch());
+                        loc.setYaw(p.getLocation().getYaw());
+
+                        if (above.isEmpty()) p.teleport(loc);
+                        return;
+                    case EGG:
+                    case SNOW_BALL:
+                        if (hand.getAmount() == hand.getMaxStackSize()) return;
+                        p.getInventory().addItem(new ItemStack(hand.getType(), 1));
+                        break;
                 }
 
-                if (hand.getType() == Material.COMPASS) {
-                    e.setUseItemInHand(Event.Result.DENY);
-                    e.setCancelled(true);
-
-                    Block main = p.getTargetBlock(Utils.ignoreAir(), 16);
-                    if (main.isEmpty()) return;
-
-                    Block above = main.getRelative(BlockFace.UP);
-
-                    Location loc = above.getLocation().add(.5, 0, .5);
-                    loc.setPitch(p.getLocation().getPitch());
-                    loc.setYaw(p.getLocation().getYaw());
-
-                    if (above.isEmpty()) p.teleport(loc);
-                    return;
-                }
+                p.updateInventory();
+                return;
             }
 
             if (e.getAction() == Action.LEFT_CLICK_BLOCK && e.getClickedBlock() != null) {
+                if (e.getItem().getType().name().contains("SWORD")) return;
                 e.setUseInteractedBlock(Event.Result.DENY);
                 e.setUseItemInHand(Event.Result.DENY);
                 e.setCancelled(true);

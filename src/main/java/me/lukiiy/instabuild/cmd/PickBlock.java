@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.MaterialData;
 
 public class PickBlock implements CommandExecutor {
@@ -19,7 +20,7 @@ public class PickBlock implements CommandExecutor {
         }
         Player p = (Player) commandSender;
 
-        Block b = p.getTargetBlock(Utils.ignoreAir(), 5);
+        Block b = p.getTargetBlock(Utils.ignoreAirAndLiquids(), 5);
         if (b == null || b.getType() == Material.AIR) {
             p.sendMessage("§cYou are not targeting a valid block.");
             return true;
@@ -28,11 +29,15 @@ public class PickBlock implements CommandExecutor {
         Material material = b.getType();
 
         ItemStack item = new ItemStack(material, material.getMaxStackSize(), (short) 0, b.getData());
-        p.getInventory().addItem(item);
+        PlayerInventory inventory = p.getInventory();
+        if (inventory.contains(material)) inventory.remove(item);
+        inventory.setItem(inventory.getHeldItemSlot(), item);
+
+        p.updateInventory();
 
         MaterialData mData = item.getData();
         byte data = (mData != null) ? mData.getData() : 0;
-        p.sendMessage("§eGot §f" + Utils.formattedCoolID(item.getType(), data, item.getAmount()));
+        p.sendMessage("§ePicked up §f" + Utils.formattedCoolID(item.getType(), data, item.getAmount()));
         return true;
     }
 }
