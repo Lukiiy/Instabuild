@@ -18,26 +18,26 @@ public class PickBlock implements CommandExecutor {
             commandSender.sendMessage("§cThis command can only be used by players.");
             return true;
         }
-        Player p = (Player) commandSender;
 
+        Player p = (Player) commandSender;
         Block b = p.getTargetBlock(Utils.ignoreAirAndLiquids(), 5);
+
         if (b == null || b.getType() == Material.AIR) {
             p.sendMessage("§cYou are not targeting a valid block.");
             return true;
         }
 
         Material material = b.getType();
-
         ItemStack item = new ItemStack(material, material.getMaxStackSize(), (short) 0, b.getData());
+        MaterialData data = item.getData();
         PlayerInventory inventory = p.getInventory();
+
         if (inventory.contains(material)) inventory.remove(item);
         inventory.setItem(inventory.getHeldItemSlot(), item);
 
         p.updateInventory();
 
-        MaterialData mData = item.getData();
-        byte data = (mData != null) ? mData.getData() : 0;
-        p.sendMessage("§ePicked up §f" + Utils.formattedCoolID(item.getType(), data, item.getAmount()));
+        p.sendMessage("§ePicked up §f" + Utils.formattedCoolID(item.getType(), (data != null) ? data.getData() : 0, item.getAmount()));
         return true;
     }
 }

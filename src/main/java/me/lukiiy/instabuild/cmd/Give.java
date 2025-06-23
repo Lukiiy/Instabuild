@@ -10,44 +10,47 @@ import org.bukkit.inventory.ItemStack;
 
 public class Give implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage("§cThis command can only be used by players.");
-            return true;
-        }
-        Player p = (Player) commandSender;
-
-        if (strings.length == 0) {
-            commandSender.sendMessage("§cInvalid use. /ibg <id:data> [amount] or /ibg <id> <data> [amount]");
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("§cThis command can only be used by players.");
             return true;
         }
 
-        int id;
-        byte data = 0;
-        int amount;
+        String usage = "§cInvalid use. /ibg <id:data|material[:data]> [amount]";
+        if (args.length == 0) {
+            sender.sendMessage(usage);
+            return true;
+        }
 
         try {
-            if (strings[0].contains(":")) {
-                String[] parts = strings[0].split(":");
-                id = Integer.parseInt(parts[0]);
-                data = Byte.parseByte(parts[1]);
-            } else id = Integer.parseInt(strings[0]);
+            String[] parts = args[0].split(":");
+            String materialPart = parts[0];
+            byte data = parts.length > 1 ? Byte.parseByte(parts[1]) : 0;
 
-            amount = (strings.length > 1) ? Integer.parseInt(strings[1]) : Material.getMaterial(id).getMaxStackSize();
-        } catch (NumberFormatException | NullPointerException e) {
-            commandSender.sendMessage("§cInvalid use. /ibg <id:data> [amount] or /ibg <id> <data> [amount]");
-            return true;
+            Material material = Material.getMaterial(materialPart.toUpperCase());
+            if (material == null) material = Material.getMaterial(Integer.parseInt(materialPart));
+
+            if (material == null) {
+                sender.sendMessage("§cInvalid material or ID.");
+                return true;
+            }
+
+            int amount = args.length > 1 ? Integer.parseInt(args[1]) : material.getMaxStackSize();
+            if (amount <= 0) {
+                sender.sendMessage("§cInvalid amount. Must be greater than 0.");
+                return true;
+            }
+
+            Player p = (Player) sender;
+            ItemStack item = new ItemStack(material, amount, (short) 0, data);
+
+            p.sendMessage("§aGot §f" + Utils.formattedCoolID(item.getType(), data, item.getAmount()));
+            p.getInventory().addItem(item);
+            p.updateInventory();
+        } catch (NumberFormatException e) {
+            sender.sendMessage(usage);
         }
 
-        if (amount <= 0) {
-            commandSender.sendMessage("§cInvalid amount. Must be greater than 0.");
-            return true;
-        }
-
-        ItemStack item = new ItemStack(Material.getMaterial(id), amount, (short) 0, data);
-        p.getInventory().addItem(item);
-        p.updateInventory();
-        p.sendMessage("§eGot §f" + Utils.formattedCoolID(item.getType(), item.getData().getData(), item.getAmount()));
         return true;
     }
 }

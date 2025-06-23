@@ -13,16 +13,13 @@ public class BlockEcho extends BlockListener {
     public void onBlockPlace(BlockPlaceEvent e) {
         Player p = e.getPlayer();
 
-        if (Instabuild.getInstance().getBuilders().contains(p)) {
-            ItemStack item = p.getItemInHand();
-            if (item.getAmount() > 0) item.setAmount(item.getAmount() + 1);
-            else {
-                ItemStack c = item.clone();
-                p.getInventory().addItem(c);
-            }
+        if (!Instabuild.getInstance().getBuilders().contains(p)) return;
 
-            Block b = e.getBlockPlaced();
-            if (b.getType() == Material.LEAVES) b.setData((byte) (b.getData() - 8));
-        }
+        ItemStack item = p.getItemInHand();
+        if (item.getAmount() > 0) item.setAmount(item.getAmount() + 1);
+        else p.getInventory().addItem(item.clone());
+
+        Block b = e.getBlockPlaced();
+        if (b.getType() == Material.LEAVES) b.setData((byte) (b.getData() - 8));
     }
 }

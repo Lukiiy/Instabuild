@@ -9,16 +9,24 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Main implements CommandExecutor {
+    private static final Map<String, String> subCmds = new LinkedHashMap<>();
+
+    static {
+        subCmds.put("list", "Lists players using LNB");
+        subCmds.put("getid", "Gets the ID for the targeted block and the item you're holding");
+        subCmds.put("listids", "Lists every item's id");
+        subCmds.put("carpet", "Toggle flying carpet");
+    }
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         List<Player> builders = Instabuild.getInstance().getBuilders();
+        String arg = strings.length < 1 ? " " : strings[0].toLowerCase();
 
-        switch (strings.length == 0 ? " " : strings[0].toLowerCase()) {
+        switch (arg) {
             case "list": {
                 if (builders.isEmpty()) {
                     commandSender.sendMessage("§cNo instabuilders active.");
@@ -29,6 +37,7 @@ public class Main implements CommandExecutor {
                 builders.forEach(b -> commandSender.sendMessage(". " + b.getName()));
                 return true;
             }
+
             case "getid": {
                 if (!(commandSender instanceof Player)) return false;
                 Player p = (Player) commandSender;
@@ -40,23 +49,60 @@ public class Main implements CommandExecutor {
                 if (hand != null) p.sendMessage("§eHand item: §f" + hand.getType().name() + " (" + hand.getTypeId() + ":" + hand.getData() + ")");
                 return true;
             }
+
             case "listids": {
                 commandSender.sendMessage("§aAvailable Item & IDs:");
                 Arrays.stream(Material.values()).forEach(m -> commandSender.sendMessage(m.name() + " (" + m.getId() + ")"));
                 return true;
             }
-        }
 
-        if (!(commandSender instanceof Player)) return false;
-        Player p = (Player) commandSender;
+            case "carpet": {
+                if (!(commandSender instanceof Player)) {
+                    commandSender.sendMessage("§cOnly in-game players can toggle the magic carpet!");
+                    return true;
+                }
 
-        if (!builders.contains(p)) {
-            p.sendMessage("Instabuild §aenabled§f!");
-            builders.add(p);
-        } else {
-            p.sendMessage("Instabuild §cdisabled§f!");
-            builders.remove(p);
+                Player p = (Player) commandSender;
+                Instabuild instabuild = Instabuild.getInstance();
+
+                if (!instabuild.carpets.containsKey(p)) {
+                    instabuild.createCarpet(p, 0);
+                    p.sendMessage("Magic Carpet §aenabled§f!");
+                    return true;
+                }
+
+                instabuild.removeCarpet(p);
+                instabuild.carpets.remove(p);
+                p.sendMessage("Magic Carpet §cdisabled§f!");
+                return true;
+            }
+
+            case "help": {
+                commandSender.sendMessage("§eInstabuild Subcommands:");
+                subCmds.forEach((cmd, desc) -> commandSender.sendMessage(" §e" + cmd + "§f -> §7" + desc));
+                return true;
+            }
+
+            default: {
+                if (!(commandSender instanceof Player)) {
+                    commandSender.sendMessage("§cOnly in-game players can toggle Instabuild mode!");
+                    return true;
+                }
+
+                Player p = (Player) commandSender;
+
+                if (!builders.contains(p)) {
+                    builders.add(p);
+                    p.setSleepingIgnored(true);
+                    p.sendMessage("Instabuild §aenabled§f!");
+                    return true;
+                }
+
+                builders.remove(p);
+                p.setSleepingIgnored(false);
+                p.sendMessage("Instabuild §cdisabled§f!");
+                return true;
+            }
         }
-        return true;
     }
 }
