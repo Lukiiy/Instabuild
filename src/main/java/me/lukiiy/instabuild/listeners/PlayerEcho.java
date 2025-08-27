@@ -13,6 +13,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 public class PlayerEcho extends PlayerListener {
     public void onPlayerQuit(PlayerQuitEvent e) {
@@ -101,13 +102,14 @@ public class PlayerEcho extends PlayerListener {
         Player p = e.getPlayer();
         Instabuild instabuild = Instabuild.getInstance();
 
-        if (!instabuild.carpets.containsKey(p)) return;
+        if (!instabuild.carpets.has(p)) return;
+
         Location from = e.getFrom();
         Location to = e.getTo();
 
         if (from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ()) {
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(instabuild, () -> {
-                if (instabuild.carpets.containsKey(p)) instabuild.createCarpet(p, 0);
+                instabuild.carpets.create(p, 0);
             });
         }
     }
@@ -117,8 +119,8 @@ public class PlayerEcho extends PlayerListener {
         Player p = e.getPlayer();
         Instabuild instabuild = Instabuild.getInstance();
 
-        if (!e.isSneaking() || !instabuild.carpets.containsKey(p)) return;
+        if (!e.isSneaking() || !instabuild.carpets.has(p)) return;
 
-        instabuild.createCarpet(p, -1);
+        instabuild.carpets.create(p, -1);
     }
 }

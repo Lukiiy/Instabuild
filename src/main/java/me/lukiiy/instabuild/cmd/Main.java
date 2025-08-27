@@ -61,17 +61,15 @@ public class Main implements CommandExecutor {
                     commandSender.sendMessage("§cOnly in-game players can toggle the magic carpet!");
                     return true;
                 }
-
                 Player p = (Player) commandSender;
                 Instabuild instabuild = Instabuild.getInstance();
 
-                if (!instabuild.carpets.containsKey(p)) {
-                    instabuild.createCarpet(p, 0);
+                if (!instabuild.carpets.has(p)) {
+                    instabuild.carpets.create(p, 0);
                     p.sendMessage("Magic Carpet §aenabled§f!");
                     return true;
                 }
 
-                instabuild.removeCarpet(p);
                 instabuild.carpets.remove(p);
                 p.sendMessage("Magic Carpet §cdisabled§f!");
                 return true;
@@ -88,7 +86,6 @@ public class Main implements CommandExecutor {
                     commandSender.sendMessage("§cOnly in-game players can toggle Instabuild mode!");
                     return true;
                 }
-
                 Player p = (Player) commandSender;
 
                 if (!builders.contains(p)) {

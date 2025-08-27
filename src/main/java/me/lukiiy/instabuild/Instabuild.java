@@ -6,6 +6,7 @@ import me.lukiiy.instabuild.cmd.PickBlock;
 import me.lukiiy.instabuild.listeners.BlockEcho;
 import me.lukiiy.instabuild.listeners.EntityEcho;
 import me.lukiiy.instabuild.listeners.PlayerEcho;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public class Instabuild extends JavaPlugin {
     private static Instabuild instance;
 
     private final List<Player> builders = new ArrayList<>();
-    public final Map<Player, Set<Block>> carpets = new HashMap<>();
+    public final MagicCarpets carpets = new MagicCarpets();
 
     @Override
     public void onEnable() {
@@ -49,7 +50,8 @@ public class Instabuild extends JavaPlugin {
         pm.registerEvent(Event.Type.ENTITY_TARGET, eListener, Event.Priority.Normal, this);
     }
 
-    @Override public void onDisable() {}
+    @Override
+    public void onDisable() {}
 
     public static Instabuild getInstance() {
         return instance;
@@ -57,31 +59,5 @@ public class Instabuild extends JavaPlugin {
 
     public List<Player> getBuilders() {
         return builders;
-    }
-
-    public void createCarpet(Player p, int yOffset) {
-        Block center = p.getLocation().getBlock().getRelative(0, -1 + yOffset, 0);
-        Set<Block> blocks = new HashSet<>();
-
-        IntStream.rangeClosed(-1, 1).forEach(x ->
-                IntStream.rangeClosed(-1, 1).forEach(z -> {
-                    Block b = center.getRelative(x, 0, z);
-
-                    if (b.getType() == Material.AIR || b.getType() == Material.GLASS) {
-                        b.setType(Material.GLASS);
-                        blocks.add(b);
-                    }
-                })
-        );
-
-        removeCarpet(p);
-        carpets.put(p, blocks);
-    }
-
-    public void removeCarpet(Player p) {
-        Set<Block> old = carpets.get(p);
-        if (old == null) return;
-
-        old.stream().filter(b -> b.getType() == Material.GLASS).forEach(b -> b.setType(Material.AIR));
     }
 }
