@@ -9,8 +9,6 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Set;
-
 public class BlockEcho extends BlockListener {
     @Override
     public void onBlockPlace(BlockPlaceEvent e) {
@@ -28,9 +26,6 @@ public class BlockEcho extends BlockListener {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e) {
-        Set<Block> carpets = Instabuild.getInstance().carpets.getAllCarpets();
-        if (carpets.isEmpty()) return;
-
-        if (carpets.contains(e.getBlock())) e.setCancelled(true);
+        if (Instabuild.getInstance().carpets.getAllCarpets().contains(e.getBlock())) e.setCancelled(true);
     }
 }

@@ -6,21 +6,13 @@ import me.lukiiy.instabuild.cmd.PickBlock;
 import me.lukiiy.instabuild.listeners.BlockEcho;
 import me.lukiiy.instabuild.listeners.EntityEcho;
 import me.lukiiy.instabuild.listeners.PlayerEcho;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.IntStream;
 
 public class Instabuild extends JavaPlugin {
     private static Instabuild instance;

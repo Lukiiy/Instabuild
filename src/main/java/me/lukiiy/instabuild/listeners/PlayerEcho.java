@@ -13,7 +13,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
 public class PlayerEcho extends PlayerListener {
     public void onPlayerQuit(PlayerQuitEvent e) {
@@ -88,7 +87,7 @@ public class PlayerEcho extends PlayerListener {
         }
 
         if (e.getAction() == Action.LEFT_CLICK_BLOCK && e.getClickedBlock() != null) {
-            if (e.getItem().getType().name().contains("SWORD")) return;
+            if (e.getItem().getType().name().contains("SWORD") || Instabuild.getInstance().carpets.getAllCarpets().contains(e.getClickedBlock())) return;
 
             e.setUseInteractedBlock(Event.Result.DENY);
             e.setUseItemInHand(Event.Result.DENY);
@@ -108,9 +107,7 @@ public class PlayerEcho extends PlayerListener {
         Location to = e.getTo();
 
         if (from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ()) {
-            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(instabuild, () -> {
-                instabuild.carpets.create(p, 0);
-            });
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(instabuild, () -> instabuild.carpets.create(p, 0));
         }
     }
 
