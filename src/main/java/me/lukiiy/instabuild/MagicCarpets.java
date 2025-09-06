@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MagicCarpets {
@@ -55,9 +56,6 @@ public class MagicCarpets {
     }
 
     public Set<Block> getAllCarpets() {
-        Set<Block> blocks = new HashSet<>();
-
-        for (Set<Block> c : carpets.values()) blocks.addAll(c);
-        return blocks;
+        return carpets.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
     }
 }

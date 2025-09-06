@@ -1,5 +1,5 @@
 name: Instabuild
-version: '1.2-SNAPSHOT'
+version: '1.2.2'
 main: me.lukiiy.instabuild.Instabuild
 author: Lukiiy
 description: A creative mode, but for b1.7.3

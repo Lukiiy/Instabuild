@@ -38,6 +38,7 @@ public class Instabuild extends JavaPlugin {
         pm.registerEvent(Event.Type.PLAYER_MOVE, pListener, Event.Priority.Lowest, this);
         pm.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, pListener, Event.Priority.Lowest, this);
         pm.registerEvent(Event.Type.BLOCK_PLACE, bListener, Event.Priority.Lowest, this);
+        pm.registerEvent(Event.Type.BLOCK_BREAK, bListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_DAMAGE, eListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_TARGET, eListener, Event.Priority.Normal, this);
     }
